@@ -9,7 +9,7 @@ trait ToMappable[L <: HList, M] {
   def apply(l: L): M
 }
 
-trait LowPriorityToMappable1 {
+trait LowPriorityToMappable1 extends Serializable {
   implicit def hconsToMappable1[K <: Symbol, V, T <: HList, M]
   (implicit wit: Witness.Aux[K], mt: MappableType[M, V], toT: Lazy[ToMappable[T, M]])
   : ToMappable[FieldType[K, V] :: T, M] = new ToMappable[FieldType[K, V] :: T, M] {

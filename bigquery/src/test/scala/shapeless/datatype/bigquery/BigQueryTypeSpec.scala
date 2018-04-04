@@ -33,7 +33,10 @@ object BigQueryTypeSpec extends Properties("BigQueryType") {
                                         mr: MatchRecord[L]): Boolean = {
     BigQuerySchema[A] // FIXME: verify the generated schema
     val t = ensureSerializable(BigQueryType[A])
-    val tr1 = t.toTableRow(m)
+    val fn = ensureSerializable(((r: A) => t.toTableRow(r)).asInstanceOf[Serializable])
+      .asInstanceOf[A => TableRow]
+    val tr1 = fn(m)
+//    val tr1 = t.toTableRow(m)
     val tr2 = mapper.readValue(mapper.writeValueAsString(tr1), classOf[TableRow])
     val rm = RecordMatcher[A]
     t.fromTableRow(tr2).exists(rm(_, m))
